@@ -1,0 +1,125 @@
+#include "Header3.h"
+
+MyArray::MyArray() {
+	sz = 0;
+	capacity = 5;
+	arr = new int[capacity];
+}
+
+MyArray::MyArray(int cap) {
+	sz = 0;
+	capacity = cap;
+	arr = new int[capacity];
+}
+
+MyArray::MyArray(int sz, int v) {
+	sz = sz;
+	capacity = sz + 1;
+	arr = new int[capacity];
+
+	for (int i = 0;i < sz;i++) {
+		arr[i] = v;
+	}
+}
+
+MyArray::~MyArray() {
+	delete[] arr;
+}
+void MyArray::resize(int offset) {
+	int* oldArr = arr;
+	int* newArr = new int[capacity * 2];
+	for (int i = 0;i < sz;i++) {
+		newArr[i + offset] = oldArr[i];
+	}
+	delete[] oldArr;
+	arr = newArr;
+	capacity *= 2;
+}
+
+void MyArray::pushBack(int v) {
+
+	if (sz == capacity) {
+		resize(v);
+	}
+	++sz;
+	arr[sz - 1] = v;
+}
+
+void MyArray::pushFront(int v) {
+	if (sz == capacity) {
+		resize(1);
+	}
+	for (int i = sz - 1;i >= 0;i--) {
+		arr[i + 1] = arr[i];
+	}
+	++sz;
+	arr[0] = v;
+}
+
+void MyArray::popBack() {
+	if (sz == 0) {
+		return;
+	}
+	--sz;
+}
+
+int MyArray::getSize() {
+	return sz;
+}
+
+int MyArray::getCapacity() {
+	return capacity;
+}
+
+int MyArray::getElem(int pos) {
+	return sz;
+}
+
+#pragma once
+
+class MyArray {
+public:
+	MyArray();
+	MyArray(int cap);
+	MyArray(int sz, int v);
+	~MyArray();
+	void pushBack(int v);
+	void pushFront(int v);
+	void popBack();
+	int getSize();
+	int getCapacity();
+	int getElem(int pos);
+private:
+	int* arr;
+	int sz;
+	int capacity;
+
+	void resize(int offset);
+};
+#include <iostream>
+#include "Header3.h"
+#include <chrono>
+#include <fstream>
+#include <vector>
+void pushTest(int trials) {
+	MyArray arr1;
+	std::vector<int>arr2(1e5);
+	std::ofstream of("C:\\Users\\Student\\Desktop\\aaa.csv");
+	for (int i = 0;i < trials; i++) {
+		auto start = std::chrono::high_resolution_clock::now();
+		arr1.pushBack(i);
+		auto elapsed = std::chrono::high_resolution_clock::now() - start;
+		long long miliSec = std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count();
+		of << miliSec<<std::endl;
+	}
+	for (int i = 0;i < trials; i++) {
+		auto start = std::chrono::high_resolution_clock::now();
+		arr2.push_back(i);
+		auto elapsed = std::chrono::high_resolution_clock::now() - start;
+		long long miliSec = std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count();
+		of << miliSec << std::endl;
+	}
+}
+int main() {
+	pushTest(10000);
+}
